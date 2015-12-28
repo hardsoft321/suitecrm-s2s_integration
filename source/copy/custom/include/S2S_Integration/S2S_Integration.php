@@ -52,11 +52,10 @@ class S2S_Integration
         $totalResult = true;
         global $sugar_config, $db;
         register_shutdown_function('S2S_DBManagerFactory::disconnectAll');
-        foreach($sugar_config['integration_instances'] as $config) {
+        foreach($sugar_config['integration_instances'] as $instanceName => $config) {
             if($config['type'] != 'sugar2sugar') {
                 continue;
             }
-            $instanceName = $config['name'];
 
             if(!empty($config['modules'])) {
                 foreach($config['modules'] as $module) {
