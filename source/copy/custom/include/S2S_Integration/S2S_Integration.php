@@ -284,7 +284,7 @@ class S2S_Integration
             $ownBean->emailAddress->addresses = $extRow['emailAddress'];
             $_REQUEST['useEmailWidget'] = true; //disable clearing in SugarEmailAddress::handleLegacySave
         }
-        $ownBean->save(!empty($ownBean->notify_on_save));
+        return $ownBean->save(!empty($ownBean->notify_on_save));
     }
 
     public function markBeanDeleted($ownBean)
