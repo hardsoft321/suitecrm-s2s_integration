@@ -255,6 +255,7 @@ class S2S_Integration
 
     public function integrateRowToBean($extRow, $ownBean)
     {
+        $ownBean->s2s_instance_name = $this->instanceName;
         if(!$extRow || !empty($extRow['deleted'])) {
             if(!empty($ownBean->fetched_row['id']) && empty($ownBean->fetched_row['deleted'])) {
                 $this->markBeanDeleted($ownBean);

@@ -8,12 +8,18 @@ class S2S_Hooks
 {
     public function afterSave($bean, $event)
     {
+        if(!empty($bean->s2s_instance_name)) {
+            return;
+        }
         $action_type = !empty($bean->deleted) ? 'delete' : (!empty($bean->fetched_row['id']) ? 'update' : 'create');
         self::insertModification($bean->module_name, $bean->id, $action_type);
     }
 
     public function afterDelete($bean, $event, $arguments)
     {
+        if(!empty($bean->s2s_instance_name)) {
+            return;
+        }
         self::insertModification($bean->module_name, $bean->id, 'delete');
     }
 
