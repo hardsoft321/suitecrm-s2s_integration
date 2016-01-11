@@ -115,6 +115,12 @@ class S2S_Integration
         return $totalResult;
     }
 
+    public static function clearOldLog()
+    {
+        global $db;
+        $db->query("DELETE FROM s2s_modifications_log WHERE date_entered < SYSDATE() - INTERVAL 10 DAY");
+    }
+
     public static function getModuleIntegrationClass($module)
     {
         if(file_exists("custom/modules/{$module}/s2s_integration.php")) {

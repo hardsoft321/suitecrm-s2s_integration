@@ -5,10 +5,16 @@
  * @package s2s_integration
  */
 $job_strings[] = 's2s_sync_from_master';
-//TODO: deleted old records in s2s_modifications_log
+$job_strings[] = 's2s_clear_old_log';
 
 function s2s_sync_from_master()
 {
     require_once 'custom/include/S2S_Integration/S2S_Integration.php';
     return S2S_Integration::runIntegration();
+}
+
+function s2s_clear_old_log()
+{
+    require_once 'custom/include/S2S_Integration/S2S_Integration.php';
+    return S2S_Integration::clearOldLog();
 }
