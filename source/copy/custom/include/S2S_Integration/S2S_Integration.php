@@ -51,7 +51,6 @@ class S2S_Integration
     {
         $totalResult = true;
         global $sugar_config, $db;
-        register_shutdown_function('S2S_DBManagerFactory::disconnectAll');
         foreach($sugar_config['integration_instances'] as $instanceName => $config) {
             if($config['type'] != 'sugar2sugar') {
                 continue;
@@ -88,12 +87,7 @@ class S2S_Integration
 
                     $result = true;
 
-                    $integrationClass = self::getModuleIntegrationClass($module);
-                    $integration = new $integrationClass($instanceName);
-                    $integration->extDb = $extDb;
-                    if(empty($integration->module)) {
-                        $integration->module = $module;
-                    }
+                    $integration = self::getModuleIntegrationObject($instanceName, $module);
                     try {
                         $result = $integration->runIntegrationPortion($prevPosition, $maxPosition) && $result;
                     }
@@ -119,6 +113,19 @@ class S2S_Integration
     {
         global $db;
         $db->query("DELETE FROM s2s_modifications_log WHERE date_entered < SYSDATE() - INTERVAL 10 DAY");
+    }
+
+    public static function getModuleIntegrationObject($instanceName, $module)
+    {
+        $integrationClass = self::getModuleIntegrationClass($module);
+        $integration = new $integrationClass($instanceName);
+        register_shutdown_function('S2S_DBManagerFactory::disconnectAll');
+        $extDb = S2S_DBManagerFactory::getInstance($instanceName);
+        $integration->extDb = $extDb;
+        if(empty($integration->module)) {
+            $integration->module = $module;
+        }
+        return $integration;
     }
 
     public static function getModuleIntegrationClass($module)
@@ -283,7 +290,9 @@ class S2S_Integration
         }
         else {
             foreach($this->getFieldsMap() as $extName => $ownName) {
-                $ownBean->$ownName = $extRow[$extName];
+                if(!empty($ownName)) {
+                    $ownBean->$ownName = $extRow[$extName];
+                }
             }
         }
         if(isset($extRow['emailAddress'])) {
