@@ -307,4 +307,44 @@ class S2S_Integration
     {
         $ownBean->mark_deleted($ownBean->id);
     }
+
+    public function diffBeans($bean1, $bean2)
+    {
+        global $current_language;
+        $fields = array_filter(array_values($this->getFieldsMap()));
+        $mod_strings = return_module_language($current_language, $bean1->module_name);
+        $diff = array();
+        $bean1DisplayValues = $bean1->get_list_view_data();
+        $bean2DisplayValues = $bean2->get_list_view_data();
+        $links = array();
+        foreach($bean1->field_defs as $def) {
+            if(!empty($def['id_name'])) {
+                $links[$def['id_name']] = $def['name'];
+            }
+        }
+        foreach($fields as $field) {
+            $vname = $bean1->field_defs[$field]['vname'];
+            $label = isset($mod_strings[$vname]) ? $mod_strings[$vname] : $vname;
+            if(isset($links[$field])) {
+                $bean1DisplayValue = $bean1->{$links[$field]};
+                $bean2DisplayValue = $bean2->{$links[$field]};
+            }
+            else {
+                $fieldUpper = strtoupper($field);
+                $bean1DisplayValue = $bean1DisplayValues[$fieldUpper];
+                $bean2DisplayValue = $bean2DisplayValues[$fieldUpper];
+            }
+            $diff[$field] = array(
+                'name' => $field,
+                'label' => $label,
+                'bean1Value' => $bean1->$field,
+                'bean1DisplayValue' => $bean1DisplayValue,
+                'bean2Value' => $bean2->$field,
+                'bean2DisplayValue' => $bean2DisplayValue,
+                'matched' => strcmp(mb_strtoupper(trim((string)$bean1->$field)), mb_strtoupper(trim((string)$bean2->$field))) === 0,
+            );
+        }
+        //TODO: emailAddress
+        return $diff;
+    }
 }

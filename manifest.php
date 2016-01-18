@@ -8,7 +8,7 @@ $manifest = array(
     'is_uninstallable' => true,
     'published_date' => '2015-12-16',
     'type' => 'module',
-    'version' => '1.0.6',
+    'version' => '1.1.0',
 );
 $installdefs = array(
     'id' => 's2s_integration',
