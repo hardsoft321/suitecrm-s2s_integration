@@ -32,6 +32,9 @@ class S2S_Integration
     public function __construct($instanceName)
     {
         $this->instanceName = $instanceName;
+        if(!isset($this->fields_map['deleted']) && !isset($this->fields_map['*'])) {
+            $this->fields_map['deleted'] = 'deleted';
+        }
     }
 
     public function getFieldsMap()
